@@ -1,62 +1,41 @@
-#include<stdio.h>
-#include<stdlib.h>
 
-#define PATH_MAX 50
+/*
+** file.h && file.c 
+** take from https://www.youtube.com/watch?v=n2AAhiujAqs
+*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define PATH_MAX 128
 #define BLOCKSIZE 512
-#define MAX_FILES 1000
 
-// typedef struct dirent {
-//     /* File position within stream */
-//     long d_off;
-//     /* File name */
-//     char d_name[PATH_MAX];
-// }dirent;
-
-// typedef struct myDIR {
-//     struct dirent ent;
-//     struct _WDIR *wdirp;
-// }myDIR;
-
-typedef struct superblock {
+struct superblock
+{
     int num_inodes;
     int num_blocks;
     int size_blocks;
-}superblock;
+};
 
-typedef struct inode {
+struct inode
+{
     int size;
     int first_block;
     char name[10];
-}inode;
+};
 
-typedef struct disk_block {
+struct disk_block
+{
     int next_block_num;
     char data[BLOCKSIZE];
-}disk_block;
+};
 
-//creat fs
-void mymkfs();
+void create_fs(); // initialize new filesysyem
+void mount_fs();  // load adile system
+void sync_fs();   // write the file system
 
-//initialize new fs
-int mymount();
-
-//write the fs
-void fync_fs();
-
-void print_fs();
-
-int alocate_file(char name [8]);
-
-int find_empty_inode();
-
-int find_empty_block();
-
-
-// int myopen(const char *pathname, int flags);
-// int myclose(int myfd);
-// ssize_t myread(int myfd, void *buf, size_t count);
-// ssize_t mywrite(int myfd, const void *buf, size_t count);
-// off_t mylseek(int myfd, off_t offset, int whence);
-// myDIR *myopendir(const char *name);
-// struct mydirent *myreaddir(myDIR *dirp);
-// int myclosedir(myDIR *dirp);
+void print_fs(); // print out info about file system
+void set_filesize(int filenum, int size);
+void write_data(int filenum, int pos, char *data);
+char* read_data(int filenum, int pos);
+int allocte_file(char name[8]); // retrun file discriptor
