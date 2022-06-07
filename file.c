@@ -250,7 +250,7 @@ int myopen(const char *pathname, int flags) {
         }
         token = strtok(NULL, s);
     }
-    for (size_t i = 0; i < sb.num_inodes; i++)
+    for (int i = 0; i < sb.num_inodes; i++)
     {
         if (!strcmp(inodes[i].name, currpath)) {
             if (inodes[i].dir!=0) {
@@ -311,13 +311,93 @@ int allocte_file(int size,const char* name)
 
     return inode;
 }
-/**************************************************************************/
+/******************************CLOSE FD************************************/
 /**************************************************************************/
 
 int myclose(int myfd) {
     open_f[myfd].fd = -1;
     open_f[myfd].pos = -1;
 }
+
+
+/******************************READ FROM FILE*****************************/
+/*************************************************************************/
+
+char read_data(int filenum, int pos)
+{
+    int b = inodes[filenum].first_block;
+
+    while (pos >= BLOCKSIZE) 
+    {
+        pos = pos - BLOCKSIZE;
+        b = dbs[b].next_block_num;
+
+        if (b==-1) 
+        {
+            perror("The block is empty");
+            return -1;
+        } 
+        else if (b == -2) 
+        {
+            perror("The block is empty");
+            return -1;
+        }
+    }
+    return dbs[b].data[pos];
+}
+
+ssize_t myread(int myfd, void *buf, size_t count) {
+
+    if (inodes[myfd].dir==1) {
+        perror("The DIR is empty");
+        return -1;
+    }
+    if (open_f[myfd].fd != myfd) { 
+        perror("Not the current file");
+        return -1;
+    }
+
+    char* res = malloc(count+1);
+
+    for (int i = 0; i < count; i++)
+    {
+        res[i] = read_data(myfd, open_f[myfd].pos);
+        open_f[myfd].pos++;
+    }
+    res[count] = '\0';
+    strncpy(buf, res, count);
+    free(res);
+    
+    return open_f[myfd].pos; 
+}
+
+/***************************WRITE TO FILE***************************/
+/*******************************************************************/
+ssize_t mywrite(int myfd, const void *buf, size_t count) {
+
+    if (inodes[myfd].dir==1) 
+    {
+        perror("The DIR is empty");
+        return 1;
+    }
+    if (open_f[myfd].fd != myfd) 
+    { 
+        perror("Not the current file");
+        return 1;
+    }
+
+    char* buffer = (char*)buf;
+
+    for (int i = 0; i < count; i++)
+    {
+        write_data(myfd, open_f[myfd].pos, buffer[i]);
+        open_f[myfd].pos++;
+    }
+    return open_f[myfd].pos;
+}
+/********************************************************************/
+/********************************************************************/
+
 
 void print_fs()
 {
@@ -352,6 +432,7 @@ void shorten_file(int bn)
     }
     dbs[bn].next_block_num = -1;
 }
+
 void set_filesize(int filenum, int size)
 {
     int temp = size + BLOCKSIZE -1;
@@ -387,15 +468,3 @@ int get_block_num(int file, int offeset)
 
 
 
-char* read_data(int filenum, int pos)
-{
-    //calculate witch block
-    int relative_block = pos/BLOCKSIZE;
-    //find the block number
-    int bn = get_block_num(filenum, relative_block);
-    //calculate the offset in the block
-    int offset = pos % BLOCKSIZE;
-    //read the data
-    char* res = malloc(sizeof(char)*1024);
-    strcpy(res, &(dbs[bn].data[offset]));
-}

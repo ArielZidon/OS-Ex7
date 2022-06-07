@@ -63,6 +63,10 @@ int myopen(const char *pathname, int flags);
 
 int myclose(int myfd);
 
+ssize_t myread(int myfd, void *buf, size_t count);
+
+ssize_t mywrite(int myfd, const void *buf, size_t count);
+
 /****************************************/
 
 
@@ -72,6 +76,6 @@ void sync_fs(const char *target);   // write the file system
 void print_fs(); // print out info about file system
 void set_filesize(int filenum, int size);
 void write_data(int filenum, int _pos, char data);
-char* read_data(int filenum, int pos);
+char read_data(int filenum, int pos);
 int allocte_file(int size,const char* name); // retrun file discriptor
 struct mydirent *myreaddir(int fd);
