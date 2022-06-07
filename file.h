@@ -51,6 +51,8 @@ superblock sb;
 inode *inodes;
 disk_block *dbs;
 
+/******************MAIN FUNCTION******************/
+
 void mymkfs(int size); // initialize new filesysyem
 
 int mymount(const char *source, const char *target,
@@ -59,9 +61,14 @@ mountflags, const void *data);
 
 int myopen(const char *pathname, int flags);
 
+int myclose(int myfd);
+
+/****************************************/
+
+
+
 void mount_fs(const char *source);  // load adile system
 void sync_fs(const char *target);   // write the file system
-
 void print_fs(); // print out info about file system
 void set_filesize(int filenum, int size);
 void write_data(int filenum, int _pos, char data);
