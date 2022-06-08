@@ -2,7 +2,7 @@
 
 int main(int argc, char const *argv[])
 {
-    // mymkfs(10000);
+    mymkfs(10000);
 
     // mymount(NULL,"fs_data",NULL,0,NULL);
     mymount("fs_data",NULL,NULL,0,NULL);
@@ -18,17 +18,18 @@ int main(int argc, char const *argv[])
     buf[21] = '\0';
     mywrite(x, buf,21);
 
-    // myopen("root/afik", 1);
+    myopen("root/afik", 1);
 
-    // myopen("root/dvir", 1);
+    myopen("root/dvir", 1);
 
     char res [1000];
-    // mylseek(x, 5, 10);
+    mylseek(x, 0, 0);
     
     // printf("%s",read_data_test(1,0));
     myread(x, res, 100);
-    printf("%s\n",res);
+    printf("%s\n",res);    
     print_fs();
+    // mymount(NULL,"fs_data",NULL,0,NULL);
     printf("done!\n");
     return 0;
 }

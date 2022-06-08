@@ -13,6 +13,7 @@
 #define MAX_DIR 10
 #define BUFF_SIZE 80
 
+
 typedef struct myopenfile
 {
     int fd;
