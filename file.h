@@ -1,7 +1,7 @@
 
 /*
 ** file.h && file.c 
-** take from https://www.youtube.com/watch?v=n2AAhiujAqs
+** Part of the project take from https://www.youtube.com/watch?v=n2AAhiujAqs
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,7 +57,6 @@ inode *inodes;
 disk_block *dbs;
 
 /******************MAIN FUNCTION******************/
-
 void mymkfs(int size); // initialize new filesysyem
 
 int mymount(const char *source, const char *target,
@@ -79,8 +78,7 @@ myDIR *myopendir(const char *name);
 struct mydirent *myreaddir(myDIR *dirp);
 
 int myclosedir(myDIR *dirp);
-
-/****************************************/
+/***********************************************/
 
 
 
@@ -90,7 +88,9 @@ void print_fs(); // print out info about file system
 void set_filesize(int filenum, int size);
 void write_data(int filenum, int _pos, char data);
 char read_data(int filenum, int pos);
-int allocte_file(int size,const char* name); // retrun file discriptor
+int create_file(int size,const char* name); // retrun file discriptor
 struct mydirent *myread_dir(int fd);
 char* read_data_test(int filenum, int pos);
 int Myopen_dir(const char *pathname);
+
+// void creatFolder();
