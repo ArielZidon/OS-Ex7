@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "file.h"
 
-typedef struct myFILE{
+typedef struct myFILE
+{
     int id;
-    char type[2];
+    char* data;
+    int size;
+    char type[3];
+    int pos;
 }myFILE;
 
 
