@@ -4,8 +4,8 @@ int main(int argc, char const *argv[])
 {
     mymkfs(10000);
 
-    // mymount(NULL,"fs_data",NULL,0,NULL);
-    mymount("fs_data",NULL,NULL,0,NULL);
+    mymount(NULL,"fs_data",NULL,0,NULL);    
+    // mymount("fs_data",NULL,0,NULL);
 
     // int x = allocte_file(2400,"ariel");
     int x = myopen("root/ariel", 1);

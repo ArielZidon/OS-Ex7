@@ -440,7 +440,12 @@ off_t mylseek(int myfd, off_t offset, int whence)
     }
     return open_f[myfd].pos;
 }
-
+/**************************OPEN DIR*******************************/
+/*****************************************************************/
+myDIR *myopendir(const char *name)
+{
+    
+}
 
 void print_fs()
 {

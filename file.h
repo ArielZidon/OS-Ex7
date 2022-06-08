@@ -70,6 +70,12 @@ ssize_t mywrite(int myfd, const void *buf, size_t count);
 
 off_t mylseek(int myfd, off_t offset, int whence);
 
+myDIR *myopendir(const char *name);
+
+struct mydirent *myreaddir(myDIR *dirp);
+
+int myclosedir(myDIR *dirp);
+
 /****************************************/
 
 
