@@ -26,26 +26,30 @@ int find_empty_block()
 /************************************************************/
 
 void createroot() {
-   
-    int zerofd = allocte_file(sizeof(struct mydirent),  "root");
-    if (zerofd != 0 ) {
-        // errno = 131;
-        return -1;
+    int i;
+    int buff = allocte_file(sizeof(struct mydirent), "root");
+    if (buff != 0 ) {
+        perror("Error problem in allocte_file");
+        return;
     }
-    inodes[zerofd].dir = 1;
-    struct mydirent* rootdir = malloc(sizeof(struct mydirent));
-    for (size_t i = 0; i < MAX_DIR; i++)
+    inodes[buff].dir = 1;
+    struct mydirent* curr = malloc(sizeof(struct mydirent));
+    if(curr == NULL){
+        perror("Error to create - mydirent*");
+        return;
+    }
+    curr->size = 0;
+    for (i = 0; i < MAX_DIR; i++)
     {
-        rootdir->fds[i] = -1;        
+        curr->fds[i] = -1;        
     }
-    strcpy(rootdir->d_name, "root");
-    rootdir->size = 0;
-    char* rootdiraschar = (char*)rootdir;
-    for (size_t i = 0; i < sizeof(struct mydirent); i++)
+    strcpy(curr->d_name, "root");
+    char* c_dir = (char*)curr;
+    for (i = 0; i < sizeof(struct mydirent); i++)
     {
-        write_data(zerofd, i, rootdiraschar[i]);
+        write_data(buff, i, c_dir[i]);
     }
-    free(rootdir);
+    free(curr);
 }
 
 void mymkfs(int size) {
@@ -73,29 +77,6 @@ void mymkfs(int size) {
     
     createroot();
 }
-
-// void create_fs()
-// {
-//     int size-= sizeof(struct superblock);
-//     sb. = (size/10)/(sizeof(struct inode));
-//     sb.num_inodes = 10;
-//     sb.num_blocks = 100;
-//     sb.size_blocks = sizeof(struct disk_block);
-
-//     inodes = malloc(sizeof(struct inode) * sb.num_inodes);
-//     for (int i = 0; i < sb.num_inodes; i++)
-//     {
-//         inodes[i].size = -1;
-//         inodes[i].first_block = -1;
-//         strcpy(inodes[i].name, "");
-//     }
-//     dbs = malloc(sizeof(struct disk_block) * sb.num_blocks);
-//     for (int i = 0; i < sb.num_blocks; i++)
-//     {
-//         dbs[i].next_block_num = -1;
-//     }
-//     // creat();
-// }
 
 int mymount(const char *source, const char *target,
  const char *filesystemtype, unsigned long
@@ -173,7 +154,7 @@ void write_data(int filenum, int _pos, char data)
     dbs[rb].data[pos] = data;
 }
 
-struct mydirent *myreaddir(int fd) {
+struct mydirent *myread_dir(int fd) {
     
     if (inodes[fd].dir!=1) 
     {
@@ -186,7 +167,7 @@ struct mydirent *myreaddir(int fd) {
 /*************************NEED TO BE CHANGE********************************/
 /**************************************************************************/
 
-int myopendir(const char *pathname) 
+int Myopen_dir(const char *pathname) 
 {
     char str[BUFF_SIZE];
     strcpy(str, pathname);
@@ -216,7 +197,7 @@ int myopendir(const char *pathname)
         }
     }
 
-    int fd = myopendir(last_p);
+    int fd = Myopen_dir(last_p);
     if (fd==-1) 
     {
         perror("fd==-1");
@@ -259,8 +240,8 @@ int myopendir(const char *pathname)
 int creatf(const char *path, const char* name) 
 {
     int fd = allocte_file(1,name);
-    int dir = myopendir(path);
-    mydirent *live_d = myreaddir(dir);
+    int dir = Myopen_dir(path);
+    mydirent *live_d = myread_dir(dir);
     live_d->fds[live_d->size++] = fd;
     return fd;
 }
@@ -442,11 +423,34 @@ off_t mylseek(int myfd, off_t offset, int whence)
 }
 /**************************OPEN DIR*******************************/
 /*****************************************************************/
+
 myDIR *myopendir(const char *name)
 {
-    
+    int path = Myopen_dir(name);
+    myDIR *res = (myDIR*)malloc(sizeof(myDIR));
+    if(res == NULL)
+    {
+        perror("Error creat res");
+    }
+    res->path = path;
+    return res;
 }
 
+struct mydirent *myreaddir(myDIR *dirp)
+{
+    mydirent *res = (mydirent*)malloc(sizeof(mydirent));
+    res = myread_dir(dirp->path);
+    return res;
+}
+
+int myclosedir(myDIR *dirp)
+{
+    printf("Dir %d has been closed",dirp->path);
+    return 0;
+}
+
+/*****************************************************************/
+/*****************************************************************/
 void print_fs()
 {
     printf("superblock info\n");

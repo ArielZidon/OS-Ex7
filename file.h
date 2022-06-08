@@ -47,6 +47,10 @@ typedef struct mydirent {
     char d_name[NAME_SIZE];
 }mydirent;
 
+typedef struct myDIR { 
+    int path;
+}myDIR;
+
 myopenfile open_f [10000];
 superblock sb;
 inode *inodes;
@@ -87,5 +91,6 @@ void set_filesize(int filenum, int size);
 void write_data(int filenum, int _pos, char data);
 char read_data(int filenum, int pos);
 int allocte_file(int size,const char* name); // retrun file discriptor
-struct mydirent *myreaddir(int fd);
+struct mydirent *myread_dir(int fd);
 char* read_data_test(int filenum, int pos);
+int Myopen_dir(const char *pathname);
