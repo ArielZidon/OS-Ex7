@@ -23,11 +23,13 @@ int main(int argc, char const *argv[])
     // printf("%s",read_data_test(1,0));
     myread(x, res, 100);
     printf("%s\n",res);    
-    print_fs();
+    // print_fs();
     // mymount(NULL,"fs_data",NULL,0,NULL);
 
     /************************AFIK***************************/
-    // myFILE *afik =  myfopen("folder/ariel", "r");
+
+    myFILE *ariel =  myfopen("folder/ariel", "r");
+    printf("%s",ariel->data);
 
     printf("done!\n");
     return 0;

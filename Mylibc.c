@@ -60,6 +60,28 @@ myFILE *myfopen(const char *restrict pathname, const char *mode)
     return file;
 }
 
+int myfclose(myFILE *stream)
+{
+    if(stream->type[0] != 'r')
+    {
+        free(stream->data);
+        free(stream);
+    }
+    else
+    {
+        for(int i = 0; i < stream->size ; i++)
+        {
+            write_data(stream->id, i, stream->data[i]);
+        }
+        free(stream->data);
+        free(stream);
+    }
+    return 0;
+
+}
+
+
+/**********************************tomorrow*************************************/
 size_t myfread(void *restrict ptr, size_t size, size_t nmemb, myFILE *stream)
 {
     if(stream->type[0] != 'r')
@@ -72,13 +94,26 @@ size_t myfread(void *restrict ptr, size_t size, size_t nmemb, myFILE *stream)
     return bytes_read / size;
 }
 
+size_t myfwrite(const void *restrict ptr, size_t size, size_t nmemb, myFILE *stream)
+{
+
+}
+
+/******************************************************************************/
+
 int myfseek(myFILE *stream, long offset, int whence)
 {
-    if(whence < 0)
+    if(whence == SEEK_SET) 
     {
-        perror("Error!");
-        return -1;
+        stream->pos = offset;
     }
-    int res = mylseek(stream->id, offset, whence);
-    return 0;
+    else if(whence == SEEK_CUR) 
+    {
+        stream->pos += offset;
+    }
+    else if (whence == SEEK_END) 
+    {
+        stream->pos = stream->size+offset;
+    } 
+    return stream->pos;
 }

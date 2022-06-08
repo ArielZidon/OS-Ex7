@@ -5,10 +5,7 @@ HEADERS =
 all: main 
 
 main: main.o file.o  Mylibc.o
-	$(CC) main.o file.o -o main
-
-Mylibc.o: Mylibc.c Mylibc.h
-	$(CC) -g -c Mylibc.c
+	$(CC) main.o  Mylibc.o file.o -o main
 
 %.o: %.c 
 	$(CC) -c $< -o $@
