@@ -7,12 +7,17 @@ int main(int argc, char const *argv[])
     // mymount(NULL,"fs_data",NULL,0,NULL);
     mymount("fs_data",NULL,NULL,0,NULL);
 
-    int x = allocte_file(1000,"ariel");
-
+    int x = allocte_file(2400,"ariel");
     myopen("ariel", 100);
+
+    int y = allocte_file(1200,"afik");
+    myopen("afik", 100);
 
     char buf[100];
     myread(x, buf, 10);
+    printf("%s\n",buf);
+
+    myread(y, buf, 10);
     printf("%s\n",buf);
 
     print_fs();

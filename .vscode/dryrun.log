@@ -1,7 +1,11 @@
-make --dry-run --keep-going --print-directory
+make --dry-run --always-make --keep-going --print-directory
 make: Entering directory '/home/ariel/Desktop/Os/Ex7'
+ 
 gcc -c main.c -o main.o
+ 
 gcc -c file.c -o file.o
+ 
 gcc main.o file.o -o main
+ 
 make: Leaving directory '/home/ariel/Desktop/Os/Ex7'
  
