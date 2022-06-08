@@ -12,7 +12,6 @@
 #define MAX_DIR 10
 #define BUFF_SIZE 80
 
-
 typedef struct myopenfile
 {
     int fd;
@@ -78,7 +77,6 @@ struct mydirent *myreaddir(myDIR *dirp);
 
 int myclosedir(myDIR *dirp);
 /*****************/
-
 
 void mount_fs(const char *source);  // load adile system
 void sync_fs(const char *target);   // write the file system
