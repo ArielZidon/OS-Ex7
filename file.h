@@ -72,7 +72,6 @@ off_t mylseek(int myfd, off_t offset, int whence);
 /****************************************/
 
 
-
 void mount_fs(const char *source);  // load adile system
 void sync_fs(const char *target);   // write the file system
 void print_fs(); // print out info about file system

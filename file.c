@@ -26,27 +26,32 @@ int find_empty_block()
 /************************************************************/
 
 void createroot() {
-   
-    int zerofd = allocte_file(sizeof(struct mydirent),  "root");
-    if (zerofd != 0 ) {
-        // errno = 131;
-        return -1;
+    int i;
+    int buff = allocte_file(sizeof(struct mydirent), "root");
+    if (buff != 0 ) {
+        perror("Error problem in allocte_file");
+        return;
     }
-    inodes[zerofd].dir = 1;
-    struct mydirent* rootdir = malloc(sizeof(struct mydirent));
-    for (size_t i = 0; i < MAX_DIR; i++)
+    inodes[buff].dir = 1;
+    struct mydirent* curr = malloc(sizeof(struct mydirent));
+    if(curr == NULL){
+        perror("Error to create - mydirent*");
+        return;
+    }
+    curr->size = 0;
+    for (i = 0; i < MAX_DIR; i++)
     {
-        rootdir->fds[i] = -1;        
+        curr->fds[i] = -1;        
     }
-    strcpy(rootdir->d_name, "root");
-    rootdir->size = 0;
-    char* rootdiraschar = (char*)rootdir;
-    for (size_t i = 0; i < sizeof(struct mydirent); i++)
+    strcpy(curr->d_name, "root");
+    char* c_dir = (char*)curr;
+    for (i = 0; i < sizeof(struct mydirent); i++)
     {
-        write_data(zerofd, i, rootdiraschar[i]);
+        write_data(buff, i, c_dir[i]);
     }
-    free(rootdir);
+    free(curr);
 }
+/************************************************************/
 
 void mymkfs(int size) {
     
@@ -73,29 +78,7 @@ void mymkfs(int size) {
     
     createroot();
 }
-
-// void create_fs()
-// {
-//     int size-= sizeof(struct superblock);
-//     sb. = (size/10)/(sizeof(struct inode));
-//     sb.num_inodes = 10;
-//     sb.num_blocks = 100;
-//     sb.size_blocks = sizeof(struct disk_block);
-
-//     inodes = malloc(sizeof(struct inode) * sb.num_inodes);
-//     for (int i = 0; i < sb.num_inodes; i++)
-//     {
-//         inodes[i].size = -1;
-//         inodes[i].first_block = -1;
-//         strcpy(inodes[i].name, "");
-//     }
-//     dbs = malloc(sizeof(struct disk_block) * sb.num_blocks);
-//     for (int i = 0; i < sb.num_blocks; i++)
-//     {
-//         dbs[i].next_block_num = -1;
-//     }
-//     // creat();
-// }
+/************************************************************/
 
 int mymount(const char *source, const char *target,
  const char *filesystemtype, unsigned long
@@ -115,6 +98,7 @@ mountflags, const void *data)
         mount_fs(source);
     }
 }
+/************************************************************/
 
 void mount_fs(const char *source)
 {
@@ -131,6 +115,7 @@ void mount_fs(const char *source)
     fread(dbs, sizeof(disk_block), sb.num_blocks, file);
     fclose(file);
 }
+/************************************************************/
 
 void sync_fs(const char *target)
 {
@@ -143,6 +128,7 @@ void sync_fs(const char *target)
     fwrite(dbs, sizeof(disk_block), sb.num_blocks, file);
     fclose(file);
 }
+/************************************************************/
 
 void write_data(int filenum, int _pos, char data)
 {
@@ -172,6 +158,7 @@ void write_data(int filenum, int _pos, char data)
     }
     dbs[rb].data[pos] = data;
 }
+/************************************************************/
 
 struct mydirent *myreaddir(int fd) {
     
@@ -255,6 +242,7 @@ int myopendir(const char *pathname)
     strcpy(newdir->d_name, this_p);
     return dir;
 }
+/************************************************************/
 
 int creatf(const char *path, const char* name) 
 {
@@ -264,6 +252,7 @@ int creatf(const char *path, const char* name)
     live_d->fds[live_d->size++] = fd;
     return fd;
 }
+/************************************************************/
 
 int myopen(const char *pathname, int flags)  // how i want to open the file. flags = r/w/a. 
 {
@@ -301,6 +290,7 @@ int myopen(const char *pathname, int flags)  // how i want to open the file. fla
     open_f[i].pos = 0;
     return i;
 }
+/************************************************************/
 
 int allocte_file(int size,const char* name)
 {
@@ -370,6 +360,7 @@ char read_data(int filenum, int pos)
     }
     return dbs[b].data[pos];
 }
+/************************************************************/
 
 ssize_t myread(int myfd, void *buf, size_t count)
 {
@@ -440,7 +431,7 @@ off_t mylseek(int myfd, off_t offset, int whence)
     }
     return open_f[myfd].pos;
 }
-
+/************************************************************/
 
 void print_fs()
 {
@@ -463,8 +454,7 @@ void print_fs()
         printf("block num: %d next block %d\n", i, dbs[i].next_block_num);
     }
 }
-
-
+/************************************************************/
 
 void shorten_file(int bn)
 {
@@ -475,6 +465,7 @@ void shorten_file(int bn)
     }
     dbs[bn].next_block_num = -1;
 }
+/************************************************************/
 
 void set_filesize(int filenum, int size)
 {
@@ -498,6 +489,7 @@ void set_filesize(int filenum, int size)
     shorten_file(bn);
     dbs[bn].next_block_num = -2;
 }
+/************************************************************/
 
 int get_block_num(int file, int offeset)
 {
@@ -508,6 +500,7 @@ int get_block_num(int file, int offeset)
     }
     return bn;
 }
+/************************************************************/
 
 char *read_data_test(int filenum, int pos)
 {
