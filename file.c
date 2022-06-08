@@ -388,8 +388,35 @@ ssize_t mywrite(int myfd, const void *buf, size_t count)
     }
     return open_f[myfd].pos;
 }
-/********************************************************************/
-/********************************************************************/
+/**************************SEEKING********************************/
+/*****************************************************************/
+off_t mylseek(int myfd, off_t offset, int whence)
+{
+    if(open_f[myfd].fd != myfd) 
+    {
+        perror("Not the current file!");
+        return -1;
+    }
+
+    if(whence == SEEK_SET) 
+    {
+        open_f[myfd].pos = offset;
+    }
+    else if (whence==SEEK_CUR) 
+    {
+        open_f[myfd].pos += offset;
+    }
+    else if (whence==SEEK_END) 
+    {
+        open_f[myfd].pos = inodes[myfd].size+offset;
+    }  
+
+    if (open_f[myfd].pos<0) 
+    {
+        open_f[myfd].pos = 0;
+    }
+    return open_f[myfd].pos;
+}
 
 
 void print_fs()

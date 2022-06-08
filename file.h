@@ -67,6 +67,8 @@ ssize_t myread(int myfd, void *buf, size_t count);
 
 ssize_t mywrite(int myfd, const void *buf, size_t count);
 
+off_t mylseek(int myfd, off_t offset, int whence);
+
 /****************************************/
 
 

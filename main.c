@@ -13,6 +13,8 @@ int main(int argc, char const *argv[])
     int y = allocte_file(1200,"afik");
     myopen("afik", 100);
 
+    mylseek(x, 5, 10);
+
     char buf[100];
     myread(x, buf, 10);
     printf("%s\n",buf);
