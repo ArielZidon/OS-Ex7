@@ -21,8 +21,9 @@ myFILE *myfopen(const char *restrict pathname, const char *mode){
 }
 
 size_t myfread(void *restrict ptr, size_t size, size_t nmemb, *restrict stream){
-    
+
 }
+
 
 
 
