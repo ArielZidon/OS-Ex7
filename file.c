@@ -25,6 +25,29 @@ int find_empty_block()
 }
 /************************************************************/
 
+void createroot() {
+   
+    int zerofd = allocte_file(sizeof(struct mydirent),  "root");
+    if (zerofd != 0 ) {
+        // errno = 131;
+        return -1;
+    }
+    inodes[zerofd].dir = 1;
+    struct mydirent* rootdir = malloc(sizeof(struct mydirent));
+    for (size_t i = 0; i < MAX_DIR; i++)
+    {
+        rootdir->fds[i] = -1;        
+    }
+    strcpy(rootdir->d_name, "root");
+    rootdir->size = 0;
+    char* rootdiraschar = (char*)rootdir;
+    for (size_t i = 0; i < sizeof(struct mydirent); i++)
+    {
+        write_data(zerofd, i, rootdiraschar[i]);
+    }
+    free(rootdir);
+}
+
 void mymkfs(int size) {
     
     int size_fs= size- sizeof(superblock);
@@ -48,7 +71,7 @@ void mymkfs(int size) {
         dbs[i].next_block_num = -1;
     }
     
-    // create_fs();
+    createroot();
 }
 
 // void create_fs()
@@ -242,7 +265,7 @@ int creatf(const char *path, const char* name)
     return fd;
 }
 
-int myopen(const char *pathname, int flags) 
+int myopen(const char *pathname, int flags)  // how i want to open the file. flags = r/w/a. 
 {
     char buf[BUFF_SIZE];
     strcpy(buf, pathname);
@@ -484,6 +507,19 @@ int get_block_num(int file, int offeset)
         bn = dbs[bn].next_block_num;
     }
     return bn;
+}
+
+char *read_data_test(int filenum, int pos)
+{
+    // calculate witch block
+    int relative_block = pos / BLOCKSIZE;
+    // find the block number
+    int bn = get_block_num(filenum, relative_block);
+    // calculate the offset in the block
+    int offset = pos % BLOCKSIZE;
+    // read the data
+    char *res = malloc(sizeof(char) * 1024);
+    strcpy(res, &(dbs[bn].data[offset]));
 }
 
 
