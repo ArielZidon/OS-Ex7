@@ -19,6 +19,7 @@ int main(int argc, char const *argv[])
     char res [1000];
     mylseek(x, 0, 0);
     
+    // printf("%s",read_data_test(1,0));
     myread(x, res, 100);
     printf("%s\n",res);    
     print_fs();

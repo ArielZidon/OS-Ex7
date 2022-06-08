@@ -1,4 +1,3 @@
-
 /*
 ** file.h && file.c 
 ** Part of the project take from https://www.youtube.com/watch?v=n2AAhiujAqs
@@ -56,7 +55,7 @@ superblock sb;
 inode *inodes;
 disk_block *dbs;
 
-/******************MAIN FUNCTION******************/
+/*******MAIN FUNCTION*******/
 void mymkfs(int size); // initialize new filesysyem
 
 int mymount(const char *source, const char *target,
@@ -78,8 +77,7 @@ myDIR *myopendir(const char *name);
 struct mydirent *myreaddir(myDIR *dirp);
 
 int myclosedir(myDIR *dirp);
-/***********************************************/
-
+/*****************/
 
 
 void mount_fs(const char *source);  // load adile system
