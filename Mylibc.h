@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 typedef struct myFILE
 {
@@ -22,6 +23,6 @@ size_t myfwrite(const void *restrict ptr, size_t size, size_t nmemb, myFILE *str
 
 int myfseek(myFILE *stream, long offset, int whence);
 
-// int myfscanf(myFILE *restrict stream, const char format, ...);
+int myfscanf(myFILE *restrict stream, const char *restrict format, ...);
 
-// int myfprintf(myFILE *restrict stream, const char format, ...);
+int myfprintf(myFILE *restrict stream, const char format, ...);

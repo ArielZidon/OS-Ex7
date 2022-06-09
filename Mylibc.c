@@ -62,7 +62,7 @@
 
 myFILE* myfopen(const char *pathname, const char *mode) 
 {
-    if ((strcmp(mode, "a")&&strcmp(mode, "w")&&strcmp(mode, "r")&&strcmp(mode, "r+"))) //checking legal mode
+    if((strcmp(mode, "a")&&strcmp(mode, "w")&&strcmp(mode, "r")&&strcmp(mode, "r+"))) //checking legal mode
     {
         perror("Not a legal mode");
         return NULL;
@@ -147,7 +147,7 @@ size_t myfread(void *restrict ptr, size_t size, size_t nmemb, myFILE *stream)
         return -1;
     }
 
-    size_t bytes_requested = size * nmemb;
+    int bytes_requested = size * nmemb;
     char *res = malloc(bytes_requested + 1);
     if(res == NULL)
     {
@@ -180,6 +180,7 @@ size_t myfwrite(const void *restrict ptr, size_t size, size_t nmemb, myFILE *str
     }
     size_t bytes_provide = size * nmemb;
     char *res = (char*)ptr;
+
     if(stream->pos+bytes_provide > stream->size)
     {
         char* buf = malloc(stream->size+1);
@@ -188,7 +189,7 @@ size_t myfwrite(const void *restrict ptr, size_t size, size_t nmemb, myFILE *str
             buf[i] = stream->data[i];
         }
         free(stream->data);
-        stream->data = malloc(stream->pos+bytes_provide);
+        stream->data = malloc(stream->pos + bytes_provide);
         for(int i = 0 ; i < stream->size ; i++)
         {
             stream->data[i] = buf[i];
@@ -222,4 +223,75 @@ int myfseek(myFILE *stream, long offset, int whence)
         stream->pos = stream->size+offset;
     } 
     return stream->pos;
+}
+
+int myfprintf(myFILE *restrict stream, const char *restrict format, ...){
+    int sum = 0, i = 0;
+    va_list arguments;                     
+    va_start(arguments, format);    
+    sum = va_arg(arguments, int);  
+    char c = va_arg(arguments, char);
+    float f = va_arg(arguments, float);
+    char trash = va_arg(arguments, char);
+    for(i = 0; i < (int)strlen(format); i++){
+
+        if(format[i] == '%')
+        {
+            if(format[i + 1] == 'd')
+            {
+                sum = va_arg(arguments, int);
+                myfwrite(&sum, sizeof(int), 1, stream);
+            }
+
+            if(format[i + 1] == 'f')
+             {
+                f = va_arg(arguments, float);
+                myfwrite(&f, sizeof(float), 1, stream);
+             }
+
+            if(format[i + 1] == 'c')
+             {
+                c = va_arg(arguments, int);
+                myfwrite(&c, sizeof(char), 1, stream);
+             }
+        }
+        else{
+            for(; (format[i] != '%'); i++)
+            {
+                trash = va_arg(arguments, char);
+                myfwrite(&trash, sizeof(char), 1, stream);
+            }
+        }
+    }
+    return i;
+}
+
+int myfscanf(myFILE *restrict stream, const char *restrict format, ...)
+{
+    int i;
+    va_list arguments;
+    va_start(arguments, format);
+    int sum = va_arg(arguments, int);  
+    char c = va_arg(arguments, char);
+    float f = va_arg(arguments, float);
+    
+    for (i = 0; i < (int)strlen(format); i++)
+    {
+        if (format[i] == '%')
+        {
+            if(format[i + 1] == 'd'){
+                sum = va_arg(arguments, int);
+                myfread(&sum, sizeof(int), 1, stream);
+            }
+            if(format[i + 1] == 'f'){
+                f = va_arg(arguments, float);
+                myfread(&f, sizeof(float), 1, stream);
+            }
+            if (format[i + 1] == 'c'){
+                c = va_arg(arguments, char);
+                myfread(&c, sizeof(char), 1, stream);
+            }
+        }
+    }
+    return i;
 }
