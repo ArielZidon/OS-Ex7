@@ -173,7 +173,7 @@ size_t myfread(void *restrict ptr, size_t size, size_t nmemb, myFILE *stream)
 
 size_t myfwrite(const void *restrict ptr, size_t size, size_t nmemb, myFILE *stream)
 {
-    if(stream->type[0] != 'w' && stream->type[0] != 'a')
+    if(stream->type[0] != 'w' && stream->type[0] != 'a' && (stream->type[0] != 'r' && stream->type[1] != '+'))
     {
         perror("Error! you need a access to read the file");
         return -1;
@@ -181,28 +181,21 @@ size_t myfwrite(const void *restrict ptr, size_t size, size_t nmemb, myFILE *str
     size_t bytes_provide = size * nmemb;
     char *res = (char*)ptr;
 
-    // if(stream->type[0] != 'w'){
-        if(stream->pos+bytes_provide > stream->size)
+    if(stream->pos+bytes_provide > stream->size)
+    {
+        char* buf = malloc(stream->size+1);
+        for(int i = 0 ; i < stream->size ; i++)
         {
-            char* buf = malloc(stream->size+1);
-            for(int i = 0 ; i < stream->size ; i++)
-            {
-                buf[i] = stream->data[i];
-            }
-            free(stream->data);
-            stream->data = malloc(stream->pos + bytes_provide);
-            for(int i = 0 ; i < stream->size ; i++)
-            {
-                stream->data[i] = buf[i];
-            }
-            free(buf);
+            buf[i] = stream->data[i];
         }
-    // }
-
-    // if(stream->type[0] != 'a')
-    // {
-
-    // }
+        free(stream->data);
+        stream->data = malloc(stream->pos + bytes_provide);
+        for(int i = 0 ; i < stream->size ; i++)
+        {
+            stream->data[i] = buf[i];
+        }
+        free(buf);
+    }
     
     int ptrT = stream->pos;
     for (int i = 0; i < bytes_provide; i++)

@@ -1,22 +1,22 @@
 .PHONY: all run clean
-CC = gcc
+CC = gcc -fPIC -g -w
+OBJECTS = file.o Mylibc.o Tests.o  
 FLAGS= 
 HEADERS = 
-all: main TEST 
+all: main TEST lib.so
 
-main: main.o file.o  Mylibc.o 
+main: main.o  file.o  Mylibc.o 
 	$(CC) main.o  Mylibc.o file.o -o main
 
 TEST: Tests.o file.o  Mylibc.o 
 	$(CC) Tests.o  Mylibc.o file.o -o TEST
 
-lib.so: file.o 
-	$(CC) --shared -fPIC -g file.o  -o lib.so
+lib.so: $(OBJECTS)
+	$(CC) --shared -fPIC -g -pthread $(OBJECTS) -o lib.so
 
 %.o: %.c 
 	$(CC) -c $< -o $@
 
 clean:
-	rm -f *.o main TEST
+	rm -f *.o main TEST lib.so
 
-	
