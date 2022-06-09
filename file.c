@@ -383,7 +383,7 @@ ssize_t myread(int myfd, void *buf, size_t count)
 ssize_t mywrite(int myfd, const void *buf, size_t count) 
 {
 
-  if (inodes[myfd].dir == 1 || open_f[myfd].fd != myfd) 
+    if(inodes[myfd].dir == 1 || open_f[myfd].fd != myfd) 
     {
         perror("The DIR is empty");
         return -1;

@@ -5,34 +5,45 @@ int main(int argc, char const *argv[])
 {
     mymkfs(10000);
 
-    mymount(NULL,"fs_data",NULL,0,NULL);    
-    // mymount("fs_data",NULL,NULL,0,NULL);
+    // mymount(NULL,"fs_data",NULL,0,NULL);    
+    // // mymount("fs_data",NULL,NULL,0,NULL);
 
-    int x = myopen("folder/ariel", 1);
+    // int y = myopen("folder/afik", 1);
     
-    mywrite(x,"WELLCOM TO AFIK AND ARIEL UFS!!!\n",35);
+    // mywrite(y,"AFIK IA HOMO!!!\n",15);
 
-    myopen("folder/afik", 1);
+    // mylseek(y, 0, 0);    
 
-    myopen("folder/dvir", 1);
+    // char buf [100];
+    // myread(y, buf, 50);
+    // printf("%s\n",buf);
 
-    char res [1000];
-    mylseek(x, 0, 0);
-    
-    // printf("%s",read_data_test(1,0));
-    // myread(x, res, 100);
-    // printf("%s\n",res);    
+    // myclose(y);
+
     // print_fs();
-    // mymount(NULL,"fs_data",NULL,0,NULL);
 
     /************************AFIK***************************/
 
-    myFILE *ariel =  myfopen("folder/ariel", "r");
+    mymount("fs_data",NULL,NULL,0,NULL);
+    
+    char res1 [100];
 
-    myfread(res, 31 , 1 , ariel);
-    printf("%s\n",res);
+    char* res2 =  "WELLCOM TO AFIK AND ARIEL UFS!!!";
+    
+    myFILE *ariel =  myfopen("folder/ariel", "w");
+
+    myfwrite(res2,31,1,ariel);
+
+    myfseek(ariel, 0 , SEEK_SET);
 
     myfclose(ariel);
+
+    myFILE *afik =  myfopen("folder/ariel", "r");
+
+    myfread(res1, 30, 1 , afik);
+    printf("%s\n",res1);
+
+    // myfclose(ariel);
 
     printf("done!\n");
     return 0;
