@@ -141,7 +141,7 @@ int myfclose(myFILE *stream)
 /**********************************tomorrow*************************************/
 size_t myfread(void *restrict ptr, size_t size, size_t nmemb, myFILE *stream)
 {
-    if(stream->type[0] != 'r')
+    if( stream->type[0] != 'r')
     {
         perror("Error! you need a access to read the file");
         return -1;
@@ -173,7 +173,7 @@ size_t myfread(void *restrict ptr, size_t size, size_t nmemb, myFILE *stream)
 
 size_t myfwrite(const void *restrict ptr, size_t size, size_t nmemb, myFILE *stream)
 {
-    if(stream->type[0] != 'w')
+    if(stream->type[0] != 'w' && stream->type[0] != 'a')
     {
         perror("Error! you need a access to read the file");
         return -1;
@@ -181,21 +181,29 @@ size_t myfwrite(const void *restrict ptr, size_t size, size_t nmemb, myFILE *str
     size_t bytes_provide = size * nmemb;
     char *res = (char*)ptr;
 
-    if(stream->pos+bytes_provide > stream->size)
-    {
-        char* buf = malloc(stream->size+1);
-        for(int i = 0 ; i < stream->size ; i++)
+    // if(stream->type[0] != 'w'){
+        if(stream->pos+bytes_provide > stream->size)
         {
-            buf[i] = stream->data[i];
+            char* buf = malloc(stream->size+1);
+            for(int i = 0 ; i < stream->size ; i++)
+            {
+                buf[i] = stream->data[i];
+            }
+            free(stream->data);
+            stream->data = malloc(stream->pos + bytes_provide);
+            for(int i = 0 ; i < stream->size ; i++)
+            {
+                stream->data[i] = buf[i];
+            }
+            free(buf);
         }
-        free(stream->data);
-        stream->data = malloc(stream->pos + bytes_provide);
-        for(int i = 0 ; i < stream->size ; i++)
-        {
-            stream->data[i] = buf[i];
-        }
-        free(buf);
-    }
+    // }
+
+    // if(stream->type[0] != 'a')
+    // {
+
+    // }
+    
     int ptrT = stream->pos;
     for (int i = 0; i < bytes_provide; i++)
     {
@@ -225,40 +233,41 @@ int myfseek(myFILE *stream, long offset, int whence)
     return stream->pos;
 }
 
-int myfprintf(myFILE *restrict stream, const char *restrict format, ...){
-    int sum = 0, i = 0;
+int myfprintf(myFILE *restrict stream, const char *restrict format, ...)
+{
+    int i = 0;
     va_list arguments;                     
     va_start(arguments, format);    
-    sum = va_arg(arguments, int);  
-    char c = va_arg(arguments, char);
-    float f = va_arg(arguments, float);
-    char trash = va_arg(arguments, char);
+    int* sum = va_arg(arguments, void*);  
+    char* c = va_arg(arguments, void*);
+    float* f = va_arg(arguments, void*);
+    char* trash = va_arg(arguments, void*);
     for(i = 0; i < (int)strlen(format); i++){
 
         if(format[i] == '%')
         {
             if(format[i + 1] == 'd')
             {
-                sum = va_arg(arguments, int);
+                sum = va_arg(arguments, void*);
                 myfwrite(&sum, sizeof(int), 1, stream);
             }
 
             if(format[i + 1] == 'f')
-             {
-                f = va_arg(arguments, float);
+            {
+                f = va_arg(arguments, void*);
                 myfwrite(&f, sizeof(float), 1, stream);
              }
 
             if(format[i + 1] == 'c')
-             {
-                c = va_arg(arguments, int);
+            {
+                c = va_arg(arguments, void*);
                 myfwrite(&c, sizeof(char), 1, stream);
-             }
+            }
         }
         else{
             for(; (format[i] != '%'); i++)
             {
-                trash = va_arg(arguments, char);
+                trash = va_arg(arguments, void*);
                 myfwrite(&trash, sizeof(char), 1, stream);
             }
         }
@@ -266,29 +275,28 @@ int myfprintf(myFILE *restrict stream, const char *restrict format, ...){
     return i;
 }
 
-int myfscanf(myFILE *restrict stream, const char *restrict format, ...)
+int myfscanf(myFILE  *stream, const char *format, ...)
 {
     int i;
     va_list arguments;
     va_start(arguments, format);
-    int sum = va_arg(arguments, int);  
-    char c = va_arg(arguments, char);
-    float f = va_arg(arguments, float);
-    
+    int* sum = va_arg(arguments, void*);  
+    char* c = va_arg(arguments, void*);
+    float* f = va_arg(arguments, void*);
     for (i = 0; i < (int)strlen(format); i++)
     {
         if (format[i] == '%')
         {
             if(format[i + 1] == 'd'){
-                sum = va_arg(arguments, int);
+                sum = va_arg(arguments, void*);
                 myfread(&sum, sizeof(int), 1, stream);
             }
             if(format[i + 1] == 'f'){
-                f = va_arg(arguments, float);
+                f = va_arg(arguments, void*);
                 myfread(&f, sizeof(float), 1, stream);
             }
             if (format[i + 1] == 'c'){
-                c = va_arg(arguments, char);
+                c = va_arg(arguments, void*);
                 myfread(&c, sizeof(char), 1, stream);
             }
         }

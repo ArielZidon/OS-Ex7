@@ -25,4 +25,4 @@ int myfseek(myFILE *stream, long offset, int whence);
 
 int myfscanf(myFILE *restrict stream, const char *restrict format, ...);
 
-int myfprintf(myFILE *restrict stream, const char format, ...);
+int myfprintf(myFILE *restrict stream, const char *restrict format, ...);
