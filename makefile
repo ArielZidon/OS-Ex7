@@ -18,3 +18,5 @@ lib.so: file.o
 
 clean:
 	rm -f *.o main TEST
+
+	
