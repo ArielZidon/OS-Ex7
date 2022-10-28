@@ -43,7 +43,6 @@ int main(int argc, char const *argv[])
     // printf("%s\n",res1);
 
     // myfclose(ariel);
-
     printf("done!\n");
     return 0;
 }
